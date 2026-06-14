@@ -1,8 +1,14 @@
+[English](README.en.md) | [🇨🇳 中文](README.md)
+
 # OpenCode Go Usage — DankMaterialShell Plugin
 
 在 DankBar 上显示 OpenCode Go 套餐用量，支持 5 小时滚动窗口、本周和本月用量监控。
 
+> 🤖 本仓库代码 **100% 由 [OpenCode Go 套餐](https://opencode.ai) 的 DeepSeek 4 Flash 生成**，我没有写一行代码。
+
 ## 效果
+
+![preview](preview.png)
 
 Bar 上显示当前滚动窗口用量百分比及重置倒计时：
 
@@ -20,6 +26,15 @@ git clone https://github.com/zhangtingfeng-2000/opencode-go-usage ~/.config/Dank
 ```
 
 重启 DankBar 或执行 `pkill quickshell`。
+
+### 可选：删除非必要文件
+
+clone 后可以删除 README 和图片以节省空间：
+
+```bash
+cd ~/.config/DankMaterialShell/plugins/opencode-go-usage
+rm -f README.md README.en.md preview.png
+```
 
 ## 配置
 
@@ -57,7 +72,9 @@ opencode-go-usage/
 ├── plugin.json                # DMS 插件清单
 ├── OpenCodeUsageWidget.qml    # 主组件（Bar pill + Popout）
 ├── OpenCodeUsageSettings.qml  # 设置面板
-└── README.md
+├── README.md                  # 中文文档
+├── README.en.md               # 英文文档
+└── preview.png                # 预览图片
 ```
 
 ## License
