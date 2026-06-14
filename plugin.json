@@ -1,0 +1,19 @@
+{
+    "id": "opencodeGoUsage",
+    "name": "OpenCode Usage",
+    "description": "Shows OpenCode AI usage statistics (tokens & cost) in the DankBar.",
+    "version": "1.0.0",
+    "author": "opencode",
+    "type": "widget",
+    "capabilities": [
+        "dankbar-widget"
+    ],
+    "component": "./OpenCodeUsageWidget.qml",
+    "icon": "monitoring",
+    "settings": "./OpenCodeUsageSettings.qml",
+    "permissions": [
+        "process",
+        "settings_read",
+        "settings_write"
+    ]
+}
