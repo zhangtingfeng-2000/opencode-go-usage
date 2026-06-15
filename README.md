@@ -4,7 +4,7 @@
 
 在 DankBar 上显示 OpenCode Go 套餐用量，支持 5 小时滚动窗口、本周和本月用量监控。
 
-> 🤖 本仓库代码 **100% 由 [OpenCode Go 套餐](https://opencode.ai) 的 DeepSeek 4 Flash 生成**，我没有写一行代码。
+> 🤖 本仓库代码 **100% 由 [OpenCode Go 套餐](https://opencode.ai) 的 DeepSeek V4 Flash 生成**。
 
 ## 效果
 

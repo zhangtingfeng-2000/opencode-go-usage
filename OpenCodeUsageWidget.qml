@@ -111,7 +111,8 @@ PluginComponent {
     }
 
     function extractObj(html, name) {
-        var idx = html.indexOf(name)
+        var idx = html.indexOf(name + ":$R")
+        if (idx < 0) idx = html.indexOf(name)
         if (idx < 0) return null
         var colon = html.indexOf(":", idx + name.length)
         if (colon < 0) return null
@@ -141,7 +142,6 @@ PluginComponent {
     }
 
     function findMonthlyFallback(html) {
-        // search for any $R[n]={...} containing "month" keyword
         var re = /\$R\[\d+\]=\{([^}]+)\}/g
         var m
         while ((m = re.exec(html)) !== null) {
@@ -179,6 +179,27 @@ PluginComponent {
         return result
     }
 
+    function secsUntilEndOfMonth() {
+        var now = new Date()
+        var end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+        return Math.floor((end.getTime() - now.getTime()) / 1000)
+    }
+
+    function secsUntilEndOfWeek() {
+        var now = new Date()
+        var dow = now.getDay()
+        var daysUntilEnd = dow === 0 ? 0 : 7 - dow
+        var end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilEnd, 23, 59, 59)
+        return Math.floor((end.getTime() - now.getTime()) / 1000)
+    }
+
+    function ensureResetTime(data, kind) {
+        if (!data || data.resetInSec !== undefined) return data
+        if (kind === "monthly") data.resetInSec = root.secsUntilEndOfMonth()
+        else if (kind === "weekly") data.resetInSec = root.secsUntilEndOfWeek()
+        return data
+    }
+
     function parseDashboard(html) {
         var rolling = root.tryNames(html, ["rollingUsage", "rolling_usage"])
         var weekly = root.tryNames(html, ["weeklyUsage", "weekly_usage"])
@@ -197,6 +218,11 @@ PluginComponent {
             }
             return
         }
+
+        // Fallback: compute local reset times when server doesn't provide them
+        monthly = root.ensureResetTime(monthly, "monthly")
+        weekly = root.ensureResetTime(weekly, "weekly")
+        rolling = root.ensureResetTime(rolling, "rolling")
 
         root.rollingData = rolling || ({})
         root.weeklyData = weekly || ({})
@@ -464,14 +490,14 @@ PluginComponent {
                                 width: parent.width; spacing: Theme.spacingM
                                 StyledText { text: "本周"; width: 50; font.pixelSize: Theme.fontSizeSmall; color: root.usageColor(root.weeklyData.usagePercent || 0); elide: Text.ElideRight }
                                 StyledText { text: root.formatPct(root.weeklyData.usagePercent); width: 70; font.pixelSize: Theme.fontSizeMedium; font.weight: Font.Bold; color: Theme.surfaceText; elide: Text.ElideRight }
-                                StyledText { text: root.formatTime(root.weeklyData.resetInSec); width: 80; font.pixelSize: Theme.fontSizeMedium; font.weight: Font.Medium; color: Theme.surfaceVariantText; elide: Text.ElideRight }
+                                StyledText { text: root.weeklyData.resetInSec !== undefined ? root.formatTime(root.weeklyData.resetInSec) : "-"; width: 80; font.pixelSize: Theme.fontSizeMedium; font.weight: Font.Medium; color: Theme.surfaceVariantText; elide: Text.ElideRight }
                             }
 
                             Row {
                                 width: parent.width; spacing: Theme.spacingM
                                 StyledText { text: "本月"; width: 50; font.pixelSize: Theme.fontSizeSmall; color: root.usageColor(root.monthlyData.usagePercent || 0); elide: Text.ElideRight }
                                 StyledText { text: root.formatPct(root.monthlyData.usagePercent); width: 70; font.pixelSize: Theme.fontSizeMedium; font.weight: Font.Bold; color: Theme.surfaceText; elide: Text.ElideRight }
-                                StyledText { text: root.formatTime(root.monthlyData.resetInSec); width: 80; font.pixelSize: Theme.fontSizeMedium; font.weight: Font.Medium; color: Theme.surfaceVariantText; elide: Text.ElideRight }
+                                StyledText { text: root.monthlyData.resetInSec !== undefined ? root.formatTime(root.monthlyData.resetInSec) : "-"; width: 80; font.pixelSize: Theme.fontSizeMedium; font.weight: Font.Medium; color: Theme.surfaceVariantText; elide: Text.ElideRight }
                             }
                         }
                     }
